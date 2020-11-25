@@ -1,4 +1,5 @@
 import model.Grammar;
+import model.Parser;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,7 +9,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Grammar grammar = new Grammar("/Users/teodoradan/Desktop/Formal-Languages-and-Compiler-Design/Lab5/src/data/g1");
+        Grammar grammar = new Grammar("/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/g1");
+        Parser parser = new Parser();
         grammar.readFromFile();
 
         while (true) {
@@ -46,6 +48,14 @@ public class Main {
                     System.out.println(grammar.productionForNonTerminal(non_terminal));
                     System.out.println("\n");
                     break;
+                case "6":
+                    parser = new Parser();
+                    System.out.println(parser.getFirstSet());
+                    break;
+                case "7":
+                    parser = new Parser();
+                    System.out.println(parser.getFollowSet());
+                    break;
                 case "0":
                     System.exit(0);
                 default:
@@ -61,6 +71,8 @@ public class Main {
         System.out.println("3 - Show productions");
         System.out.println("4 - Show starting symbol");
         System.out.println("5 - Production for given non-terminal");
+        System.out.println("6 - First set");
+        System.out.println("7 - Follow set");
         System.out.println("0 - Exit \n");
     }
 }

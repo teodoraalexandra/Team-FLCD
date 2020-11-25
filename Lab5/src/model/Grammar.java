@@ -1,24 +1,23 @@
 package model;
 
-import javafx.util.Pair;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Grammar {
     private List<String> setOfNonTerminals;
-    private List<String> setOfTerminals;
-    private HashMap<String, List<String>> setOfProductions;
+    private Set<String> setOfTerminals;
+    private List<Production> setOfProductions;
     private String startingSymbol;
     private String fileName;
 
-    public Grammar(String fileName) {
+    public Grammar(String fileName) throws FileNotFoundException {
         this.fileName = fileName;
-        this.setOfNonTerminals = new ArrayList<String>();
-        this.setOfTerminals = new ArrayList<String>();
-        this.setOfProductions = new HashMap<>();
+        this.setOfNonTerminals = new LinkedList<>();
+        this.setOfTerminals = new HashSet<>();
+        this.setOfProductions = new LinkedList<>();
         this.startingSymbol = "";
+        readFromFile();
     }
 
     public void readFromFile() throws FileNotFoundException {
@@ -33,7 +32,7 @@ public class Grammar {
         // Set of terminals
         String setOfTerminalsText = scanner.nextLine();
         String setOfTerminals = scanner.nextLine();
-        this.setOfTerminals = Arrays.asList(setOfTerminals.split(","));
+        this.setOfTerminals.addAll(Arrays.asList(setOfTerminals.split(",")));
 
         // Productions
         String productionsText = scanner.nextLine();
@@ -49,9 +48,15 @@ public class Grammar {
             List<String> productions = Arrays.asList(production.split(" -> "));
             List<String> states = Arrays.asList(productions.get(1).split(" \\| "));
 
-            Pair<String, List<String>> model = new Pair<>(productions.get(0), states);
+            List<List<String>> LLS = new ArrayList<>();
+            for (String state: states) {
+                List<String> splitted = Arrays.asList(state.split(" "));
+                LLS.add(splitted);
+            }
 
-            this.setOfProductions.put(model.getKey(), model.getValue());
+            Production model = new Production(productions.get(0), LLS);
+
+            this.setOfProductions.add(model);
         }
 
         // Starting symbol
@@ -68,19 +73,19 @@ public class Grammar {
         this.setOfNonTerminals = setOfNonTerminals;
     }
 
-    public List<String> getSetOfTerminals() {
+    public Set<String> getSetOfTerminals() {
         return setOfTerminals;
     }
 
-    public void setSetOfTerminals(List<String> setOfTerminals) {
+    public void setSetOfTerminals(Set<String> setOfTerminals) {
         this.setOfTerminals = setOfTerminals;
     }
 
-    public HashMap<String, List<String>> getSetOfProductions() {
+    public List<Production> getSetOfProductions() {
         return setOfProductions;
     }
 
-    public void setSetOfProductions(HashMap<String, List<String>> setOfProductions) {
+    public void setSetOfProductions(List<Production> setOfProductions) {
         this.setOfProductions = setOfProductions;
     }
 
@@ -100,7 +105,13 @@ public class Grammar {
         this.fileName = fileName;
     }
 
-    public List<String> productionForNonTerminal(String nonTerminal) {
-        return this.setOfProductions.get(nonTerminal);
+    public List<Production> productionForNonTerminal(String nonTerminal) {
+        List<Production> productionsForNonTerminal = new LinkedList<>();
+        for (Production production : this.setOfProductions) {
+            if (production.getStart().equals(nonTerminal)) {
+                productionsForNonTerminal.add(production);
+            }
+        }
+        return productionsForNonTerminal;
     }
 }

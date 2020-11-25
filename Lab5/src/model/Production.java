@@ -3,30 +3,32 @@ package model;
 import java.util.List;
 
 public class Production {
-    private String key;
-    private List<String> value;
+    private String start;
+    private List<List<String>> rules;
 
-    public Production() {
+    Production(String start, List<List<String>> rules) {
+        this.start = start;
+        this.rules = rules;
     }
 
-    public String getKey() {
-        return key;
+    public String getStart() {
+        return start;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setStart(String start) {
+        this.start = start;
     }
 
-    public List<String> getValue() {
-        return value;
+    public List<List<String>> getRules() {
+        return rules;
     }
 
-    public void setValue(List<String> value) {
-        this.value = value;
+    public void setRules(List<List<String>> rules) {
+        this.rules = rules;
     }
 
     @Override
     public String toString() {
-        return key + " -> " + value;
+        return start + " -> " + rules;
     }
 }
