@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Grammar grammar = new Grammar("/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/g1");
+        Grammar grammar = new Grammar("E:\\Mara\\Faculta\\an III\\Semester I\\FLCD\\labs\\Team-FLCD\\Lab5\\src\\data\\g1");
         Parser parser = new Parser();
         grammar.readFromFile();
 

@@ -17,7 +17,7 @@ public class Parser {
     private Stack<String> pi = new Stack<>();
 
     public Parser() throws FileNotFoundException {
-        this.grammar = new Grammar("/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/g1");
+        this.grammar = new Grammar("E:\\Mara\\Faculta\\an III\\Semester I\\FLCD\\labs\\Team-FLCD\\Lab5\\src\\data\\g1");
         this.firstSet = new HashMap<>();
         this.followSet = new HashMap<>();
         generateSets();
@@ -68,7 +68,7 @@ public class Parser {
         if (nonTerminal.equals(grammar.getStartingSymbol()))
             temp.add("$");
 
-        for (Production production : grammar.productionForNonTerminal(nonTerminal)) {
+        for (Production production : grammar.productionContainingNonTerminal(nonTerminal)) {
             String productionStart = production.getStart();
             for (List<String> rule : production.getRules()){
                 List<String> ruleConflict = new ArrayList<>();
