@@ -114,4 +114,14 @@ public class Grammar {
         }
         return productionsForNonTerminal;
     }
+
+    public Set<Production> productionContainingNonTerminal(String nonTerminal) {
+        Set<Production> prd = new HashSet<>();
+        for (Production p : this.setOfProductions) {
+            for (List<String> rule : p.getRules())
+                if (rule.contains(nonTerminal))
+                    prd.add(p);
+        }
+        return prd;
+    }
 }
