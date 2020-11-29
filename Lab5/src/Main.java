@@ -2,16 +2,18 @@ import model.Grammar;
 import model.Parser;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+
 public class Main {
     public static void main(String[] args) throws IOException {
-        Grammar grammar = new Grammar("E:\\Mara\\Faculta\\an III\\Semester I\\FLCD\\labs\\Team-FLCD\\Lab5\\src\\data\\g1");
-        Parser parser = new Parser();
+        String fileName = "/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/g2";
+        Grammar grammar = new Grammar(fileName);
         grammar.readFromFile();
+        Parser parser = new Parser(grammar);
+        parser.generateSets();
 
         while (true) {
             display_menu();
@@ -49,11 +51,9 @@ public class Main {
                     System.out.println("\n");
                     break;
                 case "6":
-                    parser = new Parser();
                     System.out.println(parser.getFirstSet());
                     break;
                 case "7":
-                    parser = new Parser();
                     System.out.println(parser.getFollowSet());
                     break;
                 case "0":

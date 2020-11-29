@@ -1,29 +1,22 @@
 package model;
 
-import javafx.util.Pair;
-
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 public class Parser {
     private Grammar grammar;
     private Map<String, Set<String>> firstSet;
     private Map<String, Set<String>> followSet;
     private static Stack<List<String>> rules = new Stack<>();
-    private Map<Pair<String, List<String>>, Integer> productionsNumbered = new HashMap<>();
-    private Stack<String> alpha = new Stack<>();
-    private Stack<String> beta = new Stack<>();
-    private Stack<String> pi = new Stack<>();
 
-    public Parser() throws FileNotFoundException {
-        this.grammar = new Grammar("E:\\Mara\\Faculta\\an III\\Semester I\\FLCD\\labs\\Team-FLCD\\Lab5\\src\\data\\g1");
+    public Parser(Grammar grammar) {
+        this.grammar = grammar;
         this.firstSet = new HashMap<>();
         this.followSet = new HashMap<>();
-        generateSets();
     }
 
-    private void generateSets() {
+    public void generateSets() {
         generateFirstSet();
         generateFollowSet();
     }
@@ -37,10 +30,11 @@ public class Parser {
     private void generateFollowSet() {
         for (String nonTerminal : grammar.getSetOfNonTerminals()) {
             followSet.put(nonTerminal, this.followOf(nonTerminal, nonTerminal));
-            System.out.println(this.followOf(nonTerminal, nonTerminal));
         }
     }
 
+    //  If there is a variable, and from that variable if we try to drive
+    //  all the strings then the beginning Terminal Symbol is called the first.
     private Set<String> firstOf(String nonTerminal) {
         if (firstSet.containsKey(nonTerminal))
             return firstSet.get(nonTerminal);
@@ -59,6 +53,7 @@ public class Parser {
         return temp;
     }
 
+    // What is the Terminal Symbol which follow a variable in the process of derivation.
     private Set<String> followOf(String nonTerminal, String initialNonTerminal) {
         if (followSet.containsKey(nonTerminal))
             return followSet.get(nonTerminal);
@@ -79,7 +74,6 @@ public class Parser {
                     int indexNonTerminal = rule.indexOf(nonTerminal);
                     temp.addAll(followOperation(nonTerminal, temp, terminals, productionStart, rule, indexNonTerminal, initialNonTerminal));
 
-//                    // For cases like: N -> E 36 E, when E is the nonTerminal so we have 2 possibilities: 36 goes in follow(E) and also follow(N)
                     List<String> sublist = rule.subList(indexNonTerminal + 1, rule.size());
                     if (sublist.contains(nonTerminal))
                         temp.addAll(followOperation(nonTerminal, temp, terminals, productionStart, rule, indexNonTerminal + 1 + sublist.indexOf(nonTerminal), initialNonTerminal));

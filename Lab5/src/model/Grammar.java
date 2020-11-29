@@ -17,7 +17,6 @@ public class Grammar {
         this.setOfTerminals = new HashSet<>();
         this.setOfProductions = new LinkedList<>();
         this.startingSymbol = "";
-        readFromFile();
     }
 
     public void readFromFile() throws FileNotFoundException {
@@ -46,7 +45,7 @@ public class Grammar {
             }
 
             List<String> productions = Arrays.asList(production.split(" -> "));
-            List<String> states = Arrays.asList(productions.get(1).split(" \\| "));
+            String[] states = productions.get(1).split(" \\| ");
 
             List<List<String>> LLS = new ArrayList<>();
             for (String state: states) {
@@ -115,7 +114,7 @@ public class Grammar {
         return productionsForNonTerminal;
     }
 
-    public Set<Production> productionContainingNonTerminal(String nonTerminal) {
+    Set<Production> productionContainingNonTerminal(String nonTerminal) {
         Set<Production> prd = new HashSet<>();
         for (Production p : this.setOfProductions) {
             for (List<String> rule : p.getRules())

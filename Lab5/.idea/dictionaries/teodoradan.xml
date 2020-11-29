@@ -1,7 +1,34 @@
 <component name="ProjectDictionaryState">
   <dictionary name="teodoradan">
     <words>
+      <w>altfel</w>
+      <w>arraydecl</w>
+      <w>assignstmt</w>
+      <w>atunci</w>
+      <w>bucla</w>
+      <w>cattimp</w>
+      <w>citeste</w>
+      <w>cmpdstmt</w>
+      <w>conditionlist</w>
+      <w>declist</w>
+      <w>decllist</w>
+      <w>este</w>
+      <w>executa</w>
+      <w>forstmt</w>
+      <w>gata</w>
+      <w>ifstmt</w>
+      <w>iostmt</w>
+      <w>listeaza</w>
+      <w>nono</w>
+      <w>nrconst</w>
+      <w>numar</w>
+      <w>sfarsit</w>
+      <w>simplstmt</w>
       <w>splitted</w>
+      <w>stmtlist</w>
+      <w>structstmt</w>
+      <w>variabila</w>
+      <w>whilestmt</w>
     </words>
   </dictionary>
 </component>

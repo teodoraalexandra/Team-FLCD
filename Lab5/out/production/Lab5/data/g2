@@ -1,0 +1,35 @@
+SET OF NON-TERMINALS
+program,decllist,cmpdstmt,declaration,type,type1,arraydecl,nrconst,stmtlist,stmt,simplstmt,structstmt,assignstmt,iostmt,ifstmt,whilestmt,forstmt,condition,conditionlist,symbol,term,factor,expression,positive-number-constant,OPERATION,RELATION,non-zero-digit,digit,digits
+SET OF TERMINALS
+no,;,gata,variabila,IDENTIFIER,bool,char,numar,real,[,],{,},=,+,-,*,//,/,%,(,),citeste,listeaza,este,?,atunci,sfarsit,altfel,cattimp,executa,bucla,start,stop,pas,<,<=,==,<>,>=,>,si,sau,0,1,2,3,4,5,6,7,8,9
+PRODUCTIONS
+program -> no decllist ; cmpdstmt gata
+decllist -> declaration | declaration ; decllist
+declaration -> variabila type IDENTIFIER
+type1 -> bool | char | numar | real
+arraydecl -> type1 IDENTIFIER [ positive-number-constant ]
+type -> type1 | arraydecl
+cmpdstmt -> { stmtlist }
+stmtlist -> stmt | stmt ; stmtlist
+stmt -> simplstmt | structstmt
+simplstmt -> assignstmt | iostmt
+assignstmt -> IDENTIFIER = expression
+expression -> term symbol expression | term
+symbol -> + | - | * | // | / | %
+term -> factor symbol term | factor
+factor -> ( expression ) | IDENTIFIER | IDENTIFIER [ IDENTIFIER ] | IDENTIFIER [ positive-number-constant ]
+iostmt -> citeste type IDENTIFIER | listeaza IDENTIFIER
+structstmt -> cmpdstmt | ifstmt | whilestmt | forstmt
+ifstmt -> este ( conditionlist ) ? atunci stmtlist sfarsit | este ( conditionlist ) ? atunci stmtlist sfarsit altfel stmtlist sfarsit
+whilestmt -> cattimp conditionlist executa stmtlist sfarsit
+forstmt -> bucla IDENTIFIER start IDENTIFIER stop IDENTIFIER stmtlist sfarsit | bucla IDENTIFIER start IDENTIFIER stop IDENTIFIER pas IDENTIFIER stmtlist sfarsit
+conditionlist -> condition | condition OPERATION condition
+condition -> ( expression RELATION expression )
+RELATION -> < | <= | == | <> | >= | >
+OPERATION -> si | sau
+positive-number-constant -> 0 | non-zero-digit digits
+digits -> digit | digit digits
+non-zero-digit -> 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+digit -> 0 | non-zero-digit
+STARTING SYMBOL
+program
