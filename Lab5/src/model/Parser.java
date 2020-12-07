@@ -1,6 +1,6 @@
 package model;
 
-import java.io.FileNotFoundException;
+import javafx.util.Pair;
 import java.util.*;
 
 
@@ -8,7 +8,9 @@ public class Parser {
     private Grammar grammar;
     private Map<String, Set<String>> firstSet;
     private Map<String, Set<String>> followSet;
+    private Map<Pair<String, List<String>>, Integer> productionsNumbered = new HashMap<>();
     private static Stack<List<String>> rules = new Stack<>();
+    private ParserOutput parserOutput = new ParserOutput();
 
     public Parser(Grammar grammar) {
         this.grammar = grammar;
@@ -31,6 +33,13 @@ public class Parser {
         for (String nonTerminal : grammar.getSetOfNonTerminals()) {
             followSet.put(nonTerminal, this.followOf(nonTerminal, nonTerminal));
         }
+    }
+
+    private void numberingProductions() {
+        int index = 1;
+        for (Production production: grammar.getSetOfProductions())
+            for (List<String> rule: production.getRules())
+                productionsNumbered.put(new Pair<>(production.getStart(), rule), index++);
     }
 
     //  If there is a variable, and from that variable if we try to drive
@@ -113,11 +122,68 @@ public class Parser {
         return temp;
     }
 
+    public void createParseTable() {
+        numberingProductions();
+
+        List<String> columnSymbols = new LinkedList<>(grammar.getSetOfTerminals());
+        columnSymbols.add("$");
+
+        parserOutput.put(new Pair<>("$", "$"), new Pair<>(Collections.singletonList("acc"), -1));
+        for (String terminal: grammar.getSetOfTerminals()) {
+            parserOutput.put(new Pair<>(terminal, terminal), new Pair<>(Collections.singletonList("pop"), -1));
+        }
+
+        productionsNumbered.forEach((key, value) -> {
+            String rowSymbol = key.getKey();
+            List<String> rule = key.getValue();
+            Pair<List<String>, Integer> parserOutputValue = new Pair<>(rule, value);
+
+            for (String columnSymbol : columnSymbols) {
+                Pair<String, String> parserOutputKey = new Pair<>(rowSymbol, columnSymbol);
+
+                if (rule.get(0).equals(columnSymbol) && !columnSymbol.equals("ε")) {
+                    parserOutput.put(parserOutputKey, parserOutputValue);
+                } else if (grammar.getSetOfNonTerminals().contains(rule.get(0))
+                        && firstSet.get(rule.get(0)).contains(columnSymbol)) {
+                    if (!parserOutput.containsKey(parserOutputKey)) {
+                        parserOutput.put(parserOutputKey, parserOutputValue);
+                    }
+                }
+                else {
+                    if (rule.get(0).equals("ε")) {
+                        for (String b : followSet.get(rowSymbol)) {
+                            parserOutput.put(new Pair<>(rowSymbol, b), parserOutputValue);
+                        }
+                    } else {
+                        Set<String> firsts = new HashSet<>();
+                        for (String symbol : rule)
+                            if (grammar.getSetOfNonTerminals().contains(symbol))
+                                firsts.addAll(firstSet.get(symbol));
+                        if (firsts.contains("ε")) {
+                            for (String b : firstSet.get(rowSymbol)) {
+                                if (b.equals("ε"))
+                                    b = "$";
+                                parserOutputKey = new Pair<>(rowSymbol, b);
+                                if (!parserOutput.containsKey(parserOutputKey)) {
+                                    parserOutput.put(parserOutputKey, parserOutputValue);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     public Map<String, Set<String>> getFirstSet() {
         return firstSet;
     }
 
     public Map<String, Set<String>> getFollowSet() {
         return followSet;
+    }
+
+    public ParserOutput getParserOutput() {
+        return parserOutput;
     }
 }

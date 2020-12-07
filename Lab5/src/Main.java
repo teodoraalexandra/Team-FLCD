@@ -56,6 +56,10 @@ public class Main {
                 case "7":
                     System.out.println(parser.getFollowSet());
                     break;
+                case "8":
+                    parser.createParseTable();
+                    System.out.println(parser.getParserOutput());
+                    break;
                 case "0":
                     System.exit(0);
                 default:
@@ -73,6 +77,7 @@ public class Main {
         System.out.println("5 - Production for given non-terminal");
         System.out.println("6 - First set");
         System.out.println("7 - Follow set");
+        System.out.println("8 - Parsing table");
         System.out.println("0 - Exit \n");
     }
 }
