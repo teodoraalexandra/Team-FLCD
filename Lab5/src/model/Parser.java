@@ -11,6 +11,9 @@ public class Parser {
     private Map<Pair<String, List<String>>, Integer> productionsNumbered = new HashMap<>();
     private static Stack<List<String>> rules = new Stack<>();
     private ParserOutput parserOutput = new ParserOutput();
+    private Stack<String> alpha = new Stack<>();
+    private Stack<String> beta = new Stack<>();
+    private Stack<String> pi = new Stack<>();
 
     public Parser(Grammar grammar) {
         this.grammar = grammar;
@@ -185,5 +188,76 @@ public class Parser {
 
     public ParserOutput getParserOutput() {
         return parserOutput;
+    }
+
+    public boolean parseSequence(List<String> sequence) {
+        initializeStacks(sequence);
+
+        boolean go = true;
+        boolean result = true;
+
+        while (go) {
+            String betaHead = beta.peek();
+            String alphaHead = alpha.peek();
+
+            if (betaHead.equals("$") && alphaHead.equals("$")) {
+                return true;
+            }
+
+            Pair<String, String> heads = new Pair<>(betaHead, alphaHead);
+            Pair<List<String>, Integer> parseTableEntry = parserOutput.get(heads);
+
+            if (parseTableEntry == null) {
+                heads = new Pair<>(betaHead, "ε");
+                parseTableEntry = parserOutput.get(heads);
+                if (parseTableEntry != null) {
+                    beta.pop();
+                    continue;
+                }
+
+            }
+
+            if (parseTableEntry == null) {
+                go = false;
+                result = false;
+            } else {
+                List<String> production = parseTableEntry.getKey();
+                Integer productionPos = parseTableEntry.getValue();
+
+                if (productionPos == -1 && production.get(0).equals("acc")) {
+                    go = false;
+                } else if (productionPos == -1 && production.get(0).equals("pop")) {
+                    beta.pop();
+                    alpha.pop();
+                } else {
+                    beta.pop();
+                    if (!production.get(0).equals("ε")) {
+                        pushAsChars(production, beta);
+                    }
+                    pi.push(productionPos.toString());
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void initializeStacks(List<String> w) {
+        alpha.clear();
+        alpha.push("$");
+        pushAsChars(w, alpha);
+
+        beta.clear();
+        beta.push("$");
+        beta.push(grammar.getStartingSymbol());
+
+        pi.clear();
+        pi.push("ε");
+    }
+
+    private void pushAsChars(List<String> sequence, Stack<String> stack) {
+        for (int i = sequence.size() - 1; i >= 0; i--) {
+            stack.push(sequence.get(i));
+        }
     }
 }

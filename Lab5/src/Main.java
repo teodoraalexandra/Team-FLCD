@@ -1,15 +1,25 @@
+import javafx.util.Pair;
 import model.Grammar;
 import model.Parser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        // FOR G1
+        //String fileName = "/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/g1";
+
+        // FOR G2
         String fileName = "/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/g2";
+
+        // Sequence for G1
+        String g1SequenceFilename = "/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/seq1";
+
+        // PIF for G2
+        String pifFileName = "/Users/teodoradan/Desktop/Team-FLCD/Lab5/src/data/pif";
+
         Grammar grammar = new Grammar(fileName);
         grammar.readFromFile();
         Parser parser = new Parser(grammar);
@@ -60,6 +70,16 @@ public class Main {
                     parser.createParseTable();
                     System.out.println(parser.getParserOutput());
                     break;
+                case "9":
+                    parser.createParseTable();
+                    List<String> sequence = readSequence(g1SequenceFilename);
+                    System.out.println(parser.parseSequence(sequence));
+                    break;
+                case "10":
+                    parser.createParseTable();
+                    List<String> seq = readSequenceFromPif(pifFileName);
+                    System.out.println(parser.parseSequence(seq));
+                    break;
                 case "0":
                     System.exit(0);
                 default:
@@ -78,6 +98,51 @@ public class Main {
         System.out.println("6 - First set");
         System.out.println("7 - Follow set");
         System.out.println("8 - Parsing table");
+        System.out.println("9 - Parse sequence G1 (without PIF)");
+        System.out.println("10 - Parse sequence G2 (with PIF)");
         System.out.println("0 - Exit \n");
+    }
+
+    private static List<Pair<String, Integer>> readPif(String fileName) throws FileNotFoundException {
+        List<Pair<String, Integer>> PIF = new ArrayList<>();
+        File file = new File(fileName);
+        Scanner scanner = new Scanner(file);
+        scanner.nextLine();
+
+        while (scanner.hasNextLine()) {
+            String[] pair = scanner.nextLine().split("\\s+");
+            Pair<String, Integer> elementFromPif = new Pair<>(pair[0], Integer.parseInt(pair[1]));
+            PIF.add(elementFromPif);
+        }
+
+        return PIF;
+    }
+
+    private static List<String> readSequence(String fileName) throws FileNotFoundException {
+        File file = new File(fileName);
+        Scanner scanner = new Scanner(file);
+        List<String> output = new ArrayList<>();
+
+        while (scanner.hasNextLine()) {
+            String sequence = scanner.nextLine();
+            output.addAll(Arrays.asList(sequence.replace("\n", "").split(" ")));
+        }
+
+        return output;
+    }
+
+    private static List<String> readSequenceFromPif(String fileName) throws FileNotFoundException {
+        List<Pair<String, Integer>> PIF = readPif(fileName);
+        List<String> output = new ArrayList<>();
+
+        for (Pair<String,Integer> token : PIF) {
+            if (token.getValue() == -1) {
+                output.add(token.getKey());
+            } else {
+                output.add("IDENTIFIER");
+            }
+        }
+
+        return output;
     }
 }

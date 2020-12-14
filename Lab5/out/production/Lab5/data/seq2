@@ -1,0 +1,4 @@
+no
+variabila numar IDENTIFIER ;
+{ listeaza ID }
+gata .
